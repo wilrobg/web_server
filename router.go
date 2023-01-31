@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -27,5 +26,17 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, request *http.Request) {
 
 	//impresion de mensaje respuesta que el servidor da a la ruta
 	//Fprintf es un escritor, que recive w que es el escritor asignado, y el mensaje que queremos mostrar
-	fmt.Fprintf(w, "Hello world!")
+	handler, exist := r.FindHandler(request.URL.Path)
+
+	if !exist {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	handler(w, request)
+}
+
+func (r *Router) FindHandler(path string) (http.HandlerFunc, bool) {
+	handler, exist := r.rules[path]
+	return handler, exist
 }

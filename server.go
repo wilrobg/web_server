@@ -18,3 +18,7 @@ func (s *Server) Listen() error {
 	http.Handle("/", s.router)
 	return http.ListenAndServe(s.port, nil)
 }
+
+func (s *Server) Handle(path string, handler http.HandlerFunc) {
+	s.router.rules[path] = handler
+}
